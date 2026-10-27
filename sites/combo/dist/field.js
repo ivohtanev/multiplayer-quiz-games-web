@@ -1,0 +1,8 @@
+import * as THREE from './vendor/three.module.js';
+let energy=0;export function pulse(){energy=1;}
+const canvas=document.querySelector('#space');const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
+const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(60,innerWidth/innerHeight,.1,100);camera.position.z=22;
+const group=new THREE.Group();scene.add(group);const pieces=[];
+for(let i=0;i<90;i++){const geometry=new THREE.BufferGeometry();const size=.3+Math.random()*1.8;geometry.setAttribute('position',new THREE.Float32BufferAttribute([0,size,0,-size,-size*.65,0,size,-size*.65,0],3));const material=new THREE.MeshBasicMaterial({color:new THREE.Color().setHSL(.63,.08,.12+Math.random()*.28),transparent:true,opacity:.18+Math.random()*.18,side:THREE.DoubleSide,wireframe:i%4===0});const mesh=new THREE.Mesh(geometry,material);mesh.position.set((Math.random()-.5)*65,(Math.random()-.5)*38,Math.random()*-15);mesh.rotation.set(Math.random()*3,Math.random()*3,Math.random()*6);group.add(mesh);pieces.push(mesh);}
+function resize(){renderer.setSize(innerWidth,innerHeight);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();}window.addEventListener('resize',resize);resize();const reduced=matchMedia('(prefers-reduced-motion: reduce)');let last=performance.now();
+function frame(now){const dt=Math.min((now-last)/1000,.05);last=now;if(!reduced.matches){energy=Math.max(0,energy-dt*.6);pieces.forEach((p,i)=>{p.rotation.z+=dt*(.015+energy*.7)*(i%2?1:-1);p.position.y+=dt*(.04+energy*.3);if(p.position.y>20)p.position.y=-20;});group.rotation.y=Math.sin(now*.00004)*.07;}renderer.render(scene,camera);requestAnimationFrame(frame);}requestAnimationFrame(frame);
