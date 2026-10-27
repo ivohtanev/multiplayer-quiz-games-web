@@ -28,6 +28,6 @@ export function auction(players,bids,market){
  for(let i=0;i<market.length;i++){const valid=bids.map((b,p)=>({...b,p})).filter(b=>b.tile===i&&Number.isInteger(b.amount)&&b.amount>=1&&b.amount<=players[b.p].credits&&!players[b.p].tiles.some(t=>t.id===market[i].id)&&Number.isInteger(b.slot)&&b.slot>=0&&b.slot<3&&(!(market[i].id==='focus')||typeof b.topic==='string'));
  if(!valid.length)continue;valid.sort((a,b)=>b.amount-a.amount);
  if(valid[1]?.amount===valid[0].amount){messages.push(`${market[i].name}: равенство — никой не плаща.`);continue;}
- const b=valid[0],p=players[b.p];p.credits-=b.amount;const tile={id:market[i].id,topic:b.topic,count:0};if(p.tiles.length<3)p.tiles.push(tile);else p.tiles[b.slot]=tile;messages.push(`${p.name} купи ${market[i].name} за ${b.amount} кредита.`);
+ const b=valid[0],p=players[b.p];p.credits-=b.amount;const tile={id:market[i].id,topic:market[i].id==='focus'?b.topic:undefined,count:0};if(p.tiles.length<3)p.tiles.push(tile);else p.tiles[b.slot]=tile;messages.push(`${p.name} купи ${market[i].name} за ${b.amount} кредита.`);
  }return messages.length?messages:['Няма покупки в този рунд.'];
 }
