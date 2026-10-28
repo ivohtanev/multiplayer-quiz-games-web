@@ -32,7 +32,7 @@ function draw(dt){
  edges.forEach(([a,b])=>addEdge(a,b));
  cells.forEach(c=>{addEdge(c.flip?c.a:c.b,c.flip?c.d:c.c);color.setHSL(c.hue,.25,c.light+energy*.055);const indices=c.flip?[c.a,c.b,c.d,c.a,c.d,c.c]:[c.a,c.b,c.c,c.b,c.d,c.c];for(const i of indices){facePositions[f]=pointPositions[i*3];faceColors[f++]=color.r;facePositions[f]=pointPositions[i*3+1];faceColors[f++]=color.g;facePositions[f]=-.01;faceColors[f++]=color.b;}});
  pointsGeometry.attributes.position.needsUpdate=true;linesGeometry.attributes.position.needsUpdate=true;facesGeometry.attributes.position.needsUpdate=true;facesGeometry.attributes.color.needsUpdate=true;
- lineMaterial.opacity=.045+energy*.16;pointMaterial.opacity=.13+energy*.3;faceMaterial.opacity=.055+energy*.2;renderer.render(scene,camera);
+ lineMaterial.opacity=.085+energy*.16;pointMaterial.opacity=.22+energy*.3;faceMaterial.opacity=.12+energy*.2;renderer.render(scene,camera);
 }
 function resize(){aspect=innerWidth/innerHeight;renderer.setSize(innerWidth,innerHeight);camera.left=-aspect;camera.right=aspect;camera.updateProjectionMatrix();draw(0);}
 window.addEventListener('resize',resize);resize();
