@@ -8,10 +8,10 @@ export const tiles=[
  {id:'converter',name:'Конвертор',icon:'⚡',desc:'При верен отговор: 2 кредита → 1 точка, по избор.'},
  {id:'final',name:'Финален ход',icon:'✦',desc:'Верен отговор в рунд 8: още +2 точки.'}
 ];
-export function score(p,correct,topic,round,convert){
+export function score(p,correct,topic,round,convert,activated=[]){
  const events=[correct?'+1 точка · +2 кредита':'+1 кредит'];const initial=p.credits;
  p.credits+=correct?2:1;p.score+=correct?1:0;
- for(const t of p.tiles){let bonus=0;
+ for(const t of p.tiles){let bonus=0;const creditsBefore=p.credits;
  if(t.id==='streak'){t.count=correct?(t.count||0)+1:0;if(t.count===2){bonus=1;t.count=0;}}
  if(t.id==='comeback'&&correct&&p.previous===false)bonus=1;
  if(t.id==='reserve'&&!correct){p.credits++;events.push('Резерв: +1 кредит');}
@@ -20,7 +20,8 @@ export function score(p,correct,topic,round,convert){
  if(t.id==='switch'&&correct&&p.topic&&p.topic!==topic)bonus=1;
  if(t.id==='converter'&&correct&&convert&&p.credits>=2){p.credits-=2;bonus=1;events.push('Конвертор: −2 кредита');}
  if(t.id==='final'&&correct&&round===8)bonus=2;
- if(bonus){p.score+=bonus;events.push(`${tiles.find(x=>x.id===t.id).name}: +${bonus} точка`);}}
+ if(bonus){p.score+=bonus;events.push(`${tiles.find(x=>x.id===t.id).name}: +${bonus} точка`);}
+ if(bonus||p.credits!==creditsBefore)activated.push({id:t.id,points:bonus,credits:p.credits-creditsBefore});}
  p.previous=correct;p.topic=topic;return events;
 }
 export function auction(players,bids,market){

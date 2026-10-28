@@ -12,3 +12,13 @@ test('complete eight rounds, no market in final rounds, duplicate answer ignored
 test('result rewards include tile bonuses and converter spending for each player',()=>{const game=new GameSession();game.state.players[0].tiles=[{id:'converter'},{id:'focus',topic:questions[0].topic}];game.state.players[1].tiles=[{id:'reserve'}];game.dispatch({type:'start',convert:true});const before=game.state.players.map(p=>({score:p.score,credits:p.credits}));const result=game.dispatch({type:'answer',answer:questions[0].correct});assert.equal(result.phase,'result');assert.deepEqual(result.rewards[0],{points:3,credits:0});result.players.forEach((p,i)=>{assert.deepEqual(result.rewards[i],{points:p.score-before[i].score,credits:p.credits-before[i].credits});});const rewards=structuredClone(result.rewards);game.dispatch({type:'answer',answer:1});assert.deepEqual(game.state.rewards,rewards);});
 
 test('unanswered question has no points and preserves credit reward',()=>{const game=new GameSession();game.dispatch({type:'start'});const result=game.dispatch({type:'answer',answer:null});assert.equal(result.answers[0],null);assert.deepEqual(result.rewards[0],{points:0,credits:1});});
+
+test('player name defaults and activated tiles match awarded bonuses',()=>{
+ const game=new GameSession();
+ game.dispatch({type:'enter',name:'   '});assert.equal(game.state.players[0].name,'Играч 1');
+ game.dispatch({type:'enter',name:'  Иво  '});assert.equal(game.state.players[0].name,'Иво');
+ game.state.players[0].tiles=[{id:'converter'},{id:'focus',topic:questions[0].topic},{id:'reserve'}];
+ game.dispatch({type:'start',convert:true});
+ const result=game.dispatch({type:'answer',answer:questions[0].correct});
+ assert.deepEqual(result.activated[0],[{id:'converter',points:1,credits:-2},{id:'focus',points:1,credits:0}]);
+});
